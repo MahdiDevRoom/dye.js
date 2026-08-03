@@ -15,17 +15,7 @@ export type NamedColor =
     | 'cyan'    | 'brightCyan' 
     | 'white'   | 'brightWhite';
 
-export interface RgbColor {
-    type: 'rgb';
-    value: [red: number, green: number, blue: number];
-}
-
-export interface CodeColor {
-    type: 'code';
-    value: number;
-}
-
-export type Color = NamedColor | RgbColor | CodeColor;
+export type Color = NamedColor | string;
 
 export type ModifierKey = 
     | 'bold'      | 'blink' 
@@ -84,6 +74,9 @@ export function validation(input: string | RawAttributes): void;
 /** Visible text length (tags stripped) */
 export function textLength(markup: string): number;
 
+/**  Returns only the visible text content, stripping all markup tags */
+export function innerText(input: string | StyledBlock[]): string;
+
 /** 
  * Render overloads:
  * - `render(markup)` → full markup parsing
@@ -95,7 +88,6 @@ export function render(input: string, styles: Style): string;
 export function render(input: { text: string; style?: Style }): string;
 
 // ─── Default Export ─────────────────────────
-
 declare const dye: {
     version: string;
 
@@ -105,6 +97,7 @@ declare const dye: {
 
     // Helpers
     textLength: typeof textLength;
+    innerText: typeof innerText;
     createTag: typeof createTag;
     createStyle: typeof createStyle;
 

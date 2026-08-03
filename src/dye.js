@@ -1,6 +1,6 @@
 /**
  * @name dye
- * @version 1.0.0
+ * @version 1.1.0
  * @description Dye text in CLI
  * @author MahdiDevRoom
  * @license MIT
@@ -272,6 +272,29 @@ function textLength(markup) {
     return len;
 }
 
+// --- Visible Text --------------------------
+function innerText(input) {
+    if (Array.isArray(input)) {
+        let text = '';
+
+        for (const block of input) if (block?.text && typeof block.text === 'string') text += block.text;
+
+        return text;
+    }
+    
+    if (typeof input === 'string') {
+        const ast = parseMarkup(input);
+        let text = '';
+        
+        for (const node of ast) if (node.type === 'text') text += node.value;
+        
+        return text;
+    }
+    
+    log(`Invalid input: expected markup string or array of styled blocks`);
+    return '';
+}
+
 // --- Render --------------------------------
 function render(input, styles) {
     // render(text, styleObject)
@@ -314,7 +337,7 @@ function render(input, styles) {
 
 // --- Dye -----------------------------------
 export default {
-    version: '1.0.0',
+    version: '1.1.0',
     
     // Main entry points
     render,
@@ -322,6 +345,7 @@ export default {
     
     // Helpers
     textLength,
+    innerText,
     createTag,
     createStyle,
     

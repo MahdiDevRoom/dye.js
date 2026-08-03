@@ -10,6 +10,7 @@ const ms1 = '<!bold>Hello <!fg:blue>Dye.js<!>';
 console.log('  Input:', ms1);
 console.log('  Render:', dye.render(ms1));
 console.log('  TextLength:', dye.textLength(ms1));
+console.log('  InnerText:', dye.innerText(ms1));
 console.log('  Logs:', dye.logs.length ? dye.logs : '✅ No errors');
 console.log();
 
@@ -71,7 +72,7 @@ console.log();
 
 // ─── 9. render({ text, style }) ──────────────
 console.log('📌 9. render({ text, style })');
-const result2 = dye.render({ text: 'Styled Block', style: { fg: 'magenta', italic: true } });
+const result2 = dye.render({ text: 'Styled Block', style: { fg: 'rgb(255,0,255)', italic: true } });
 console.log('  Input: { text: "Styled Block", style: { fg: "magenta", italic: true } }');
 console.log('  Render:', result2);
 console.log();

@@ -1,8 +1,15 @@
-Changelog
+# Changelog
 
-[1.0.0] - 2026-08-03
+## [1.1.0] - 2026-08-03
 
-Added
+### Added
+
+- `innerText()` function to extract plain text from markup or styled blocks
+
+
+## [1.0.0] - 2026-08-03
+
+### Added
 
 - Initial release
 - CLI text styling with ANSI escape sequences
@@ -20,7 +27,7 @@ Added
 - Low-level APIs: "parseMarkup()", "parseStyle()", "toAnsi()", "applyStyle()"
 - Test suite for core functionality
 
-Notes
+### Notes
 
 - Zero dependencies
 - Designed for Node.js / CLI environments

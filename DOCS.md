@@ -17,19 +17,12 @@ dye.js uses:
 Examples:
 
 ```text
-<!fg:red>
-<!bg:blue>
-<!fg:red bold>
-<!fg:rgb(255,0,0)>
-<!fg:code(202)>
-<!bold underline>
-```
-
-Both compact and spaced tags are accepted:
-
-```text
-<!fg:red>
-<! fg:red >
+<! fg:red>
+<! bg:blue>
+<! fg:red bold>
+<! fg:rgb(255,0,0)>
+<! fg:code(202)>
+<! bold underline>
 ```
 
 ## Reset
@@ -37,69 +30,44 @@ Both compact and spaced tags are accepted:
 An empty tag resets the current style:
 
 ```text
-<!>
-```
-
-The explicit reset attribute is also supported:
-
-```text
-<!reset>
+<!> Or <! reset>
 ```
 
 Example:
 
 ```js
-dye.render(
-  '<!fg:red>Red <!fg:blue>Blue <!reset>Normal'
-);
+dye.render('<! fg:red>Red <! fg:blue>Blue <! reset>Normal');
 ```
 
 ## Colors
 
-### Foreground
+### Foreground & Background
 
-Use `fg:`:
+Use `fg:` & `bg:`:
 
 ```text
-<!fg:red>
+<! fg:red bg:black>
 ```
 
 Supported colors:
 
-```text
-black
-brightBlack
-red
-brightRed
-green
-brightGreen
-yellow
-brightYellow
-blue
-brightBlue
-magenta
-brightMagenta
-cyan
-brightCyan
-white
-brightWhite
-```
+| Colors  | Bright Colors |
+|---------|---------------|
+| black   | brightBlack   |
+| red     | brightRed     |
+| green   | brightGreen   |
+| yellow  | brightYellow  |
+| blue    | brightBlue    |
+| magenta | brightMagenta |
+| cyan    | brightCyan    |
+| white   | brightWhite   |
 
-### Background
-
-Use `bg:`:
-
-```text
-<!bg:blue>
-```
-
-The same color names are supported.
 
 ### RGB
 
 ```text
-fg:rgb(r,g,b)
-bg:rgb(r,g,b)
+fg:rgb(r, g, b)
+bg:rgb(r, g, b)
 ```
 
 Each component must be `0`–`255`.
@@ -107,7 +75,7 @@ Each component must be `0`–`255`.
 Example:
 
 ```js
-dye.render('<!fg:rgb(255,0,100)>Custom<!>');
+dye.render('<!fg:rgb(255,15,111)>Custom<!>');
 ```
 
 ### 256-color
@@ -121,15 +89,15 @@ bg:code(n)
 
 ## Effects
 
-| Effect | Syntax |
-|---|---|
-| Bold | `bold` |
-| Dim | `dim` |
-| Italic | `italic` |
-| Underline | `underline` |
-| Blink | `blink` |
-| Inverse | `inverse` |
-| Hidden | `hidden` |
+| Effect        | Syntax          |
+|---------------|-----------------|
+| Bold          | `bold`          |
+| Dim           | `dim`           |
+| Italic        | `italic`        |
+| Underline     | `underline`     |
+| Blink         | `blink`         |
+| Inverse       | `inverse`       |
+| Hidden        | `hidden`        |
 | Strikethrough | `strikethrough` |
 
 Example:
@@ -211,8 +179,15 @@ const length = dye.textLength(
   '<!fg:red>Hello<!> World'
 );
 ```
+## `innerText()`
 
-Useful for CLI alignment and tables.
+Returns visible text while ignoring tags.
+
+```js
+const length = dye.innerText(
+  '<!fg:red>Hello<!> World'
+);
+```
 
 ## `createTag()`
 
@@ -236,10 +211,7 @@ RGB style objects:
 
 ```js
 dye.createTag({
-  fg: {
-    type: 'rgb',
-    value: [255, 0, 100]
-  }
+  fg: 'rgb(255,0,100)';
 });
 ```
 
@@ -281,11 +253,11 @@ dye.logLevel = 2;
 
 Values:
 
-| Level | Behavior |
-|---|---|
-| `1` | Collect errors |
-| `2` | Throw errors |
-| `3` | Print and exit |
+| Level | Behavior       |
+|-------|----------------|
+| `1`   | Collect errors |
+| `2`   | Throw errors   |
+| `3`   | Print and exit |
 
 ## `logs`
 
@@ -406,8 +378,6 @@ This is a low-level API intended mainly for advanced use and testing.
 
 ## Style Object Format
 
-Basic:
-
 ```js
 {
   fg: 'red',
@@ -417,45 +387,23 @@ Basic:
 }
 ```
 
-RGB:
-
-```js
-{
-  fg: {
-    type: 'rgb',
-    value: [255, 0, 0]
-  }
-}
-```
-
-256-color:
-
-```js
-{
-  fg: {
-    type: 'code',
-    value: 202
-  }
-}
-```
-
 ## Public API Summary
 
-| API | Purpose |
-|---|---|
-| `version` | Current version |
-| `render()` | Render markup or style objects |
-| `validation()` | Validate input |
-| `textLength()` | Get visible text length |
-| `createTag()` | Create markup from style |
-| `createStyle()` | Create style from markup |
-| `logLevel` | Get/set error handling |
-| `logs` | Read collected logs |
-| `clearLogs()` | Clear collected logs |
-| `parseMarkup()` | Parse markup into AST |
-| `parseStyle()` | Resolve AST into styled blocks |
-| `toAnsi()` | Convert style to ANSI |
-| `applyStyle()` | Validate/normalize styles |
+| API             | Purpose                        |
+|-----------------|--------------------------------|
+| `version`       | Current version                |
+| `render()`      | Render markup or style objects |
+| `validation()`  | Validate input                 |
+| `textLength()`  | Get visible text length        |
+| `createTag()`   | Create markup from style       |
+| `createStyle()` | Create style from markup       |
+| `logLevel`      | Get/set error handling         |
+| `logs`          | Read collected logs            |
+| `clearLogs()`   | Clear collected logs           |
+| `parseMarkup()` | Parse markup into AST          |
+| `parseStyle()`  | Resolve AST into styled blocks |
+| `toAnsi()`      | Convert style to ANSI          |
+| `applyStyle()`  | Validate/normalize styles      |
 
 ## Test Coverage
 
