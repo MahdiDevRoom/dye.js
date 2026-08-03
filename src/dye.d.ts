@@ -1,0 +1,123 @@
+/** 
+ * @name dye.d.ts
+ * @see https://github.com/MahdiDevRoom/dye.js/blob/main/DOCUMENTATION.md
+ */
+
+// ─── Types ───────────────────────────────────
+
+export type NamedColor = 
+    | 'black'   | 'brightBlack' 
+    | 'red'     | 'brightRed' 
+    | 'green'   | 'brightGreen' 
+    | 'yellow'  | 'brightYellow' 
+    | 'blue'    | 'brightBlue' 
+    | 'magenta' | 'brightMagenta' 
+    | 'cyan'    | 'brightCyan' 
+    | 'white'   | 'brightWhite';
+
+export interface RgbColor {
+    type: 'rgb';
+    value: [red: number, green: number, blue: number];
+}
+
+export interface CodeColor {
+    type: 'code';
+    value: number;
+}
+
+export type Color = NamedColor | RgbColor | CodeColor;
+
+export type ModifierKey = 
+    | 'bold'      | 'blink' 
+    | 'dim'       | 'inverse' 
+    | 'italic'    | 'hidden' 
+    | 'underline' | 'strikethrough';
+
+export type Style = Partial<Record<ModifierKey, true>> & {
+    fg?: Color;
+    bg?: Color;
+    reset?: true;
+};
+
+export type RawAttributes = Record<string, string | true>;
+
+export type AstNode =
+    | { type: 'text'; value: string }
+    | { type: 'tag'; value: RawAttributes };
+
+export interface StyledBlock {
+    text: string;
+    style: Style;
+}
+
+export type LogLevel = 1 | 2 | 3;
+
+// ─── Functions ──────────────────────────────
+
+/** Get a copy of all collected logs */
+export function getLogs(): string[];
+
+/** Clear all collected logs */
+export function clearLogs(): void;
+
+/** Parse markup string to AST */
+export function parseMarkup(markup: string): AstNode[];
+
+/** Parse AST to styled blocks */
+export function parseStyle(ast: AstNode[]): StyledBlock[];
+
+/** Apply and validate styles (mutates `current`) */
+export function applyStyle(current: Style, styles: RawAttributes): Style;
+
+/** Convert style object to ANSI escape codes */
+export function toAnsi(style?: Style): string;
+
+/** Create a tag string from a style object */
+export function createTag(style?: Style): string;
+
+/** Create a style object from a tag string */
+export function createStyle(tag: string): Style;
+
+/** Validate without rendering (errors go to logs) */
+export function validation(input: string | RawAttributes): void;
+
+/** Visible text length (tags stripped) */
+export function textLength(markup: string): number;
+
+/** 
+ * Render overloads:
+ * - `render(markup)` → full markup parsing
+ * - `render(text, style)` → shorthand for single styled block
+ * - `render({ text, style })` → styled block object
+ */
+export function render(input: string): string;
+export function render(input: string, styles: Style): string;
+export function render(input: { text: string; style?: Style }): string;
+
+// ─── Default Export ─────────────────────────
+
+declare const dye: {
+    version: string;
+
+    // Main
+    render: typeof render;
+    validation: typeof validation;
+
+    // Helpers
+    textLength: typeof textLength;
+    createTag: typeof createTag;
+    createStyle: typeof createStyle;
+
+    // Log control
+    logLevel: LogLevel;
+    logs: string[];
+    clearLogs: typeof clearLogs;
+
+    // Low‑level
+    parseMarkup: typeof parseMarkup;
+    parseStyle: typeof parseStyle;
+    toAnsi: typeof toAnsi;
+    applyStyle: typeof applyStyle;
+};
+
+export default dye;

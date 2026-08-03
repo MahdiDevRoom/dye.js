@@ -1,0 +1,13 @@
+{
+    "name": "dye",
+    "version": "1.0.0",
+    "description": "Dye text in CLI",
+    "author": "MahdiDevRoom",
+    "license": "MIT",
+    "type": "module",
+    "types": "src/pie.d.ts",
+    "scripts": {
+        "test": "node test",
+        "dev": "node --watch-path=src --watch-path=test test"
+    }
+}
