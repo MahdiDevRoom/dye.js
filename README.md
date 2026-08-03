@@ -35,24 +35,24 @@ import dye from './src/dye.js';
 import dye from './src/dye.js';
 
 console.log(
-  dye.render('<!fg:green bold>Hello, dye.js!<!>')
+  dye.render('<! fg:green bold>Hello, dye.js!<!>')
 );
 ```
 
 ## Markup Syntax ☑️
 ```text
-<!attribute:value modifier>
+<! attribute:value modifier>
 ```
 
 Examples:
 
 ```text
-<!fg:red>
-<!bg:blue>
-<!fg:red bold>
-<!fg:rgb(255,0,0)>
-<!fg:code(202)>
-<!bold underline>
+<! fg:red>
+<! bg:blue>
+<! fg:red bold>
+<! fg:rgb(255,0,0)>
+<! fg:code(202)>
+<! bold underline>
 ```
 
 Reset:
@@ -62,7 +62,7 @@ Reset:
 
 or:
 ```text
-<!reset>
+<! reset>
 ```
 
 See [`DOCS.md`](DOCS.md) for the complete API reference.
