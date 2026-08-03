@@ -79,13 +79,17 @@ export function innerText(input: string | StyledBlock[]): string;
 
 /** 
  * Render overloads:
- * - `render(markup)` → full markup parsing
- * - `render(text, style)` → shorthand for single styled block
- * - `render({ text, style })` → styled block object
+ * - `render(markup)` → full markup parsing (no auto-reset)
+ * - `render(text, style)` → shorthand for single styled block (with reset)
+ * - `render({ text, style })` → styled block object (with reset)
+ * - `render({ style })` → style-only (no reset, no text)
+ * - `render([...StyledBlock])` → array of styled blocks (reset after each block)
  */
 export function render(input: string): string;
 export function render(input: string, styles: Style): string;
 export function render(input: { text: string; style?: Style }): string;
+export function render(input: { style: Style }): string;
+export function render(input: StyledBlock[]): string;
 
 // ─── Default Export ─────────────────────────
 declare const dye: {
