@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1] - 2026-08-04
+
+### Fixed
+
+- overflow styles bug in `render()`
+
+
 ## [1.2.0] - 2026-08-03
 
 ### Added

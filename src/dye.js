@@ -1,6 +1,6 @@
 /**
  * @name Dye
- * @version 1.2.0
+ * @version 1.2.1
  * @description Dye text in CLI
  * @author MahdiDevRoom
  * @license MIT
@@ -65,13 +65,14 @@ const ANSI = {
 
 // --- REGEXP --------------------------------
 const REGEXP = {
-    tag:   /(<![^>]*>)/g,
-    isTag: /^<![^>]*>$/,
-    attr:  /(\w+)(?::([^\s(]+)(?:\(([^)]*)\))?)?/g,
-    rgb:   /^rgb\(\s*([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\s*,\s*([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\s*,\s*([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\s*\)$/,
-    code:  /^code\(\s*([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\s*\)$/,
-    style: /^(fg|bg|bold|dim|italic|underline|blink|inverse|hidden|strikethrough)$/,
-    color: /^(black|brightBlack|red|brightRed|green|brightGreen|yellow|brightYellow|blue|brightBlue|magenta|brightMagenta|cyan|brightCyan|white|brightWhite|rgb|code)$/,
+    tag:     /(<![^>]*>)/g,
+    current: /<!([^>]*)>/,
+    isTag:   /^<![^>]*>$/,
+    attr:    /(\w+)(?::([^\s(]+)(?:\(([^)]*)\))?)?/g,
+    rgb:     /^rgb\(\s*([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\s*,\s*([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\s*,\s*([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\s*\)$/,
+    code:    /^code\(\s*([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\s*\)$/,
+    style:   /^(fg|bg|bold|dim|italic|underline|blink|inverse|hidden|strikethrough)$/,
+    color:   /^(black|brightBlack|red|brightRed|green|brightGreen|yellow|brightYellow|blue|brightBlue|magenta|brightMagenta|cyan|brightCyan|white|brightWhite|rgb|code)$/,
 };
 
 // --- Attribute Parsing ---------------------
@@ -140,7 +141,7 @@ function parseMarkup(markup) {
     
     for (const part of parts) {
         if (REGEXP.isTag.test(part)) {
-            const content = part.slice(2, -1).trim();
+            const content = part.match(REGEXP.current)[1].trim();
             
             if (content) {
                 const attrs = parseAttrs(content);
@@ -149,7 +150,10 @@ function parseMarkup(markup) {
                 else log(`Invalid tag content: "${content}"`);
             } 
             
-            else ast.push({ type: 'tag', value: { reset: true } });
+            else {
+                
+                ast.push({ type: 'tag', value: { reset: true } });
+                }
         } 
         
         else ast.push({ type: 'text', value: part });
@@ -165,11 +169,20 @@ function parseStyle(ast) {
     
     for (const node of ast) {
         if (node.type === 'text') {
-            if (node.value) result.push({text: node.value, style: { ...current }});
+            if (node.value) {
+                result.push({ text: node.value, style: { ...current } });
+            }
             continue;
         }
         
-        if (node.type === 'tag') current = applyStyle(current, node.value);
+        if (node.type === 'tag') {
+            if (node.value.reset === true) {
+                result.push({ text: '', style: { reset: true } });
+                current = {};
+            } else {
+                current = applyStyle(current, node.value);
+            }
+        }
     }
     
     return result;
@@ -177,6 +190,10 @@ function parseStyle(ast) {
 
 // --- Style object -> ANSI string -----------
 function toAnsi(style = {}) {
+    if (style.reset === true) {
+        return ANSI.reset;
+    }
+    
     let result = '';
     
     for (const [key, value] of Object.entries(style)) {
@@ -297,9 +314,10 @@ function innerText(input) {
 
 // --- Render --------------------------------
 function render(input, styles) {
-    // render([...StyledBlock])
+    let output = '';
+    
+    // 1. render([...StyledBlock])
     if (Array.isArray(input)) {
-        let output = '';
         for (const block of input) {
             if (block?.text && typeof block.text === 'string') {
                 const style = applyStyle({}, block.style || {});
@@ -309,42 +327,59 @@ function render(input, styles) {
         return output;
     }
     
-    // render({ style })
+    // 2. render({ style })
     if (typeof input === 'object' && input !== null && !('text' in input)) {
         const style = applyStyle({}, input);
         return toAnsi(style);
     }
     
-    // render({ text, style })
+    // 3. render({ text, style })
     if (typeof input === 'object' && input !== null && 'text' in input) {
-        const style = applyStyle({}, input.style || {});
-        return toAnsi(style) + input.text + ANSI.reset;
-    }
-    
-    // render(text, styleObject)
-    if (typeof input === 'string' && typeof styles === 'object' && styles !== null) {
-        const style = applyStyle({}, styles);
-        return toAnsi(style) + input + ANSI.reset;
-    }
-    
-    // render(markupString)
-    if (typeof input === 'string') {
-        const ast = parseMarkup(input);
+        if (typeof input.text !== 'string') {
+            log(`Invalid input: "text" must be a string, got ${typeof input.text}`);
+            return '';
+        }
+        
+        const ast = [
+            { type: 'tag', value: input.style || {} },
+            { type: 'text', value: input.text }
+        ];
         const blocks = parseStyle(ast);
-        let output = '';
         for (const block of blocks) {
             output += toAnsi(block.style) + block.text;
         }
         return output;
     }
     
-    log(`Invalid render input`);
+    // 4. render(text, styleObject)
+    if (typeof input === 'string' && typeof styles === 'object' && styles !== null) {
+        const ast = [
+            { type: 'tag', value: styles },
+            { type: 'text', value: input }
+        ];
+        const blocks = parseStyle(ast);
+        for (const block of blocks) {
+            output += toAnsi(block.style) + block.text;
+        }
+        return output;
+    }
+    
+    // 5. render(markupString)
+    if (typeof input === 'string') {
+        const ast = parseMarkup(input);
+        const blocks = parseStyle(ast);
+        for (const block of blocks) {
+            output += toAnsi(block.style) + block.text;
+        }
+        return output;
+    }
+    
+    log(`Invalid render input: expected markup string, style object, block, or array of blocks`);
     return '';
 }
-
 // --- Dye -----------------------------------
 export default {
-    version: '1.2.0',
+    version: '1.2.1',
     
     // Main entry points
     render,
