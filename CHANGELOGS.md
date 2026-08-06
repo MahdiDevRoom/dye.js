@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.3.2] - 2026-08-04
+
+### Fixed
+
+ - fix `clearLogs()` error
+
 ## [1.3.1] - 2026-08-04
 
 ### Added

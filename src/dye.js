@@ -1,6 +1,6 @@
 /**
  * @name Dye
- * @version 1.2.1
+ * @version 1.3.2
  * @description Dye text in CLI
  * @author MahdiDevRoom
  * @license MIT
@@ -25,7 +25,7 @@ function setLogLevel(level) {
     else log(`Invalid log level: "${level}" (expected 1, 2, or 3)`);
 }
 function clearLogs(){
-    LOGS = [];
+    LOGS.length = 0;
 }
 
 // --- ANSI ----------------------------------
@@ -388,7 +388,7 @@ function render(input, styles) {
 }
 // --- Dye -----------------------------------
 export default {
-    version: '1.3.1',
+    version: '1.3.2',
     
     // Main entry points
     render,
