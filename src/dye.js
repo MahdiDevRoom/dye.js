@@ -1,6 +1,6 @@
 /**
  * @name Dye
- * @version 1.3.2
+ * @version 1.3.3
  * @description Dye text in CLI
  * @author MahdiDevRoom
  * @license MIT
@@ -324,8 +324,8 @@ function innerText(input) {
 // --- Render --------------------------------
 function render(input, styles) {
     let output = '';
-    
-    // 1. render([...StyledBlock])
+
+    // Array of blocks
     if (Array.isArray(input)) {
         for (const block of input) {
             if (block?.text && typeof block.text === 'string') {
@@ -335,20 +335,19 @@ function render(input, styles) {
         }
         return output;
     }
-    
-    // 2. render({ style })
+
+    // style
     if (typeof input === 'object' && input !== null && !('text' in input)) {
         const style = applyStyle({}, input);
-        return toAnsi(style);
+        return toAnsi(style) + ANSI.reset;
     }
-    
-    // 3. render({ text, style })
+
+    // { text, style }
     if (typeof input === 'object' && input !== null && 'text' in input) {
         if (typeof input.text !== 'string') {
             log(`Invalid input: "text" must be a string, got ${typeof input.text}`);
             return '';
         }
-        
         const ast = [
             { type: 'tag', value: input.style || {} },
             { type: 'text', value: input.text }
@@ -357,10 +356,11 @@ function render(input, styles) {
         for (const block of blocks) {
             output += toAnsi(block.style) + block.text;
         }
+        output += ANSI.reset;
         return output;
     }
-    
-    // 4. render(text, styleObject)
+
+    // (text, style)
     if (typeof input === 'string' && typeof styles === 'object' && styles !== null) {
         const ast = [
             { type: 'tag', value: styles },
@@ -370,25 +370,27 @@ function render(input, styles) {
         for (const block of blocks) {
             output += toAnsi(block.style) + block.text;
         }
+        output += ANSI.reset;
         return output;
     }
-    
-    // 5. render(markupString)
+
+    // markup string
     if (typeof input === 'string') {
         const ast = parseMarkup(input);
         const blocks = parseStyle(ast);
         for (const block of blocks) {
             output += toAnsi(block.style) + block.text;
         }
+        output += ANSI.reset;
         return output;
     }
-    
+
     log(`Invalid render input: expected markup string, style object, block, or array of blocks`);
     return '';
 }
 // --- Dye -----------------------------------
 export default {
-    version: '1.3.2',
+    version: '1.3.3',
     
     // Main entry points
     render,

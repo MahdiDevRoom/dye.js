@@ -1,4 +1,4 @@
-# Dye.js (v1.3.2)
+# Dye.js (v1.3.3)
 > A small, dependency-free JavaScript library for styling CLI text using ANSI escape sequences.
 `dye` provides a lightweight markup syntax for applying foreground colors, background colors, text styles, RGB colors, and 256-color codes to terminal output.
 > **Status:** GitHub-only — this package is currently **not published on npm**.
