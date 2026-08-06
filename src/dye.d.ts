@@ -69,7 +69,7 @@ export function createTag(style?: Style): string;
 export function createStyle(tag: string): Style;
 
 /** Validate without rendering (errors go to logs) */
-export function validation(input: string | RawAttributes): void;
+export function validation(input: string | RawAttributes | StyledBlock[]): void;
 
 /** Visible text length (tags stripped) */
 export function textLength(markup: string): number;

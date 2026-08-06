@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.3.1] - 2026-08-04
+
+### Added
+
+- Array of `StyledBlock` support in `validation()`
+
 ## [1.2.1] - 2026-08-04
 
 ### Fixed

@@ -157,15 +157,22 @@ Validates a style string or object.
 
 ```js
 dye.validation('<!fg:red bold>');
-```
 
-or:
-
-```js
 dye.validation({
   fg: 'cyan',
   bold: true
 });
+
+dye.validation([
+  {
+    text: 'Hello',
+    style: {fg: 'cyan', bold: true }
+  },{
+    text: 'World',
+    style: {fg: 'yello', underline: true }
+  }
+]);
+
 ```
 
 Invalid values are reported through the configured log level.

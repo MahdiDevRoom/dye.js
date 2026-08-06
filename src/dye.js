@@ -256,6 +256,15 @@ function createStyle(tag) {
 // --- Validation ----------------------------
 function validation(input) {
     let attrs;
+
+    if (Array.isArray(input)) {
+        for (const block of input) {
+            if (block?.style) {
+                applyStyle({}, block.style);
+            }
+        }
+        return;
+    }
     
     if (typeof input === 'string') {
         const content = REGEXP.isTag.test(input) ? input.slice(2, -1).trim() : input.trim();
@@ -379,7 +388,7 @@ function render(input, styles) {
 }
 // --- Dye -----------------------------------
 export default {
-    version: '1.2.1',
+    version: '1.3.1',
     
     // Main entry points
     render,
